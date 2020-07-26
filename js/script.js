@@ -66,7 +66,7 @@ function promptWhile(text, verificationСonditions, alerts) {
             //let fName = verificationСonditions[i];
             //let VCFunc = eval(verificationСonditions[i]);
             //console.log(fParam, verificationСonditions[i], VCFunc);
-            console.log(`for is started, ${i} iteration`)
+            console.log(`for is started, ${i} iteration`);
             switch (true) {
                 case eval(verificationСonditions[i]):
                     alert(alerts[i]);
@@ -93,66 +93,48 @@ function rememberMyFilms(DBName) {
     console.log(`numberOfRateFilms = ${numberOfRateFilms}`);
     //Количество незаполненных фильмов итераций
     out1: for (let i = 0, temp = numberOfFilms - numberOfRateFilms; i < temp; i++) {
-        //Ввод названия фильма вплоть до выполнения требований к имени
         console.log(`for(i = 0; ${i} < ${temp}; i++)`);
+        //Ввод названия фильма вплоть до выполнения требований к имени
         oneLastFilm = promptWhile('Один из последних просмотренных фильмов?', 
                         ['promptErrCheck(fParam)', 'lengthF(fParam) > 50'], 
                         ['Необходимо указать все фильмы', 'Не более 50 символов в названии']);
         console.log(`oneLastFilm = ${oneLastFilm}`);
-        /*out2: while (true) { 
-            oneLastFilm = prompt("Один из последних просмотренных фильмов?", "");
-            //Прерывание опроса для собственных нужд
-            if ( (oneLastFilm || rateOfOneLastFilm) === "000" ) {
-                break out1;
-            }
-            switch (true) {
-                //Проверка названия на отмену ввода, пустую строку и строку из пробелов
-                case ( promptErrCheck(oneLastFilm) ):
-                    alert("Необходимо указать все фильмы");
-                    break;
-                //Проверка на длину названия
-                case oneLastFilm.length > 50:
-                    alert("Не более 50 символов.");
-                    break;
-                default:
-                    break out2;                
-            }
-        }*/
-        //Ввод оценки фильма вплоть до выполнения требований к оценке
         const str = 'Укажите оценку от 1 до 10';
+        //Ввод оценки фильма вплоть до выполнения требований к имени
         rateOfOneLastFilm = promptWhile('На сколько оцените его?', 
                                 ['promptErrNumCheck(fParam)', 'fParam < 1', 'fParam > 10'],
                                 [str, str, str]); 
         console.log(`rateOfOneLastFilm = ${rateOfOneLastFilm}`);
-        /*out3: while (true) { 
-            rateOfOneLastFilm = prompt("На сколько оцените его?", "");
-            //Прерывание опроса для собственных нужд
-            if ( (oneLastFilm || rateOfOneLastFilm) === "000" ) {
-                break out1;
-            }
-            switch (true) {
-                //Проверка названия на отмену ввода, пустую строку и строку из пробелов
-                case ( promptErrNumCheck(oneLastFilm) || oneLastFilm < 1 || oneLastFilm > 10):
-                    alert("Укажите оценку от 1 до 10");
-                    break;
-                default:
-                    break out3;                
-            }
-        }*/
-        //добавление фильма в базу с названием в ключе объекта и оценкой в значении
-        //Проверка фильма на повтор
-        //Увеличение счетка оцененных фильмов
         console.log(`oneLastFilm in DBName.movies is ${oneLastFilm} in ${DBName.movies} is',
                     (oneLastFilm in DBName.movies)`);
+        //Проверка на повтор о оценках фильмов
         if (oneLastFilm in DBName.movies) {
             i--;
             alert(`Фильму "${oneLastFilm}" присвоена новая оценка`);
             console.log(oneLastFilm);
         }
         DBName.movies[oneLastFilm] = rateOfOneLastFilm;
+        DBName.count++;
         console.log(`${i} iteration is finished`);
     }
     console.log(`finished rememberMyFilms(); DBname is ${DBName}`);
+}
+
+function detectPersonalLevel(DBname) {
+    switch (true) {
+        default:
+        case isNaN(DBname.count):
+            alert("Произошла ошибка");
+            break;
+        case DBname.count < 10:
+            alert("Просмотрено довольно мало фильмов");
+            break;
+        case DBname.count <= 30:
+            alert("Вы классический зритель");
+            break;
+        case DBname.count > 30:
+            alert("Вы киноман");
+    }
 }
 
 /*
@@ -166,21 +148,8 @@ start();
 if (prompt('rememberMyFilms', '') !== null) {
     rememberMyFilms(personalMovieDB);
 }
-/*
-switch (true) {
-    default:
-    case isNaN(personalMovieDB.count):
-        alert("Произошла ошибка");
-        break;
-    case personalMovieDB.count < 10:
-        alert("Просмотрено довольно мало фильмов");
-        break;
-    case personalMovieDB.count <= 30:
-        alert("Вы классический зритель");
-        break;
-    case personalMovieDB.count > 30:
-        alert("Вы киноман");
-}*/
+detectPersonalLevel(personalMovieDB);
+
 
 
 console.log(personalMovieDB);
