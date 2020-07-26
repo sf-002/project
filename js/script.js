@@ -137,6 +137,18 @@ function detectPersonalLevel(DBname) {
     }
 }
 
+function showMyDB(DBname) {
+    if (!DBname.private) {
+        console.log(DBname);
+    }
+}
+
+function writeYourGenres(DBname) {
+    for (let i = 0; i < 3; i++) {
+        DBname.genres[i] = prompt(`Ваш любимый жанр под номером ${i+1}`, '');
+    }
+}
+
 /*
 3) При помощи условий проверить  personalMovieDB.count, и если он меньше 10 - 
 вывести сообщение
