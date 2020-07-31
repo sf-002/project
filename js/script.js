@@ -16,7 +16,7 @@ let personalMovieDB = {
             this.count += numberOfFilms;
         },
 
-        rememberMyFilms: function () {
+        rememberMyFilms: function() {
             console.log('rememberMyFilms', this);
 
             let numberOfRateFilms = Object.keys(this.movies).length,
@@ -42,7 +42,7 @@ let personalMovieDB = {
             }
         },
         
-        detectPersonalLevel: function () {
+        detectPersonalLevel: function() {
             switch (true) {
                 default:
                 case isNaN(this.count):
@@ -59,19 +59,24 @@ let personalMovieDB = {
             }
         },
         
-        showMyDB: function () {
+        showMyDB: function() {
             if (!this.private) {
                 console.log(this);
             }
         },
         
-        writeYourGenres: function () {
+        writeYourGenres: function() {
             for (let i = 0; i < 3; i++) {
                 this.genres[i] = prompt(`Ваш любимый жанр под номером ${i+1}`, '');
             }
         },
 
-    
+        toggleVisibleMyDB: function() {
+            this.privat = !this.privat;
+        },
+
+        //accessory
+
         promptErrCheck: function (textVar) {
             return (textVar === null || textVar == "" || /^\s+$/.test(textVar));
         },
