@@ -66,9 +66,20 @@ let personalMovieDB = {
         },
         
         writeYourGenres: function() {
+            let currentGenre = '';
             for (let i = 0; i < 3; i++) {
-                this.genres[i] = prompt(`Ваш любимый жанр под номером ${i+1}`, '');
+                currentGenre = personalMovieDB.promptWhile(`Ваш любимый жанр под номером ${i+1}`,
+                                     [[personalMovieDB.promptErrCheck]], ['Введите жанр']);
+                if (this.genres.includes(currentGenre, 0)) {
+                    i--;
+                    alert(`Жанр "${currentGenre}" уже был указан ранее`);
+                } else {
+                    this.genres[i] = currentGenre;
+                }
             }
+            this.genres.forEach(function(item, index, arr) {
+                console.log(`Любимый жанр #${index+1} - это ${item}`);
+            });
         },
 
         toggleVisibleMyDB: function() {
@@ -82,7 +93,6 @@ let personalMovieDB = {
         },
         
         promptErrNumCheck: function (numberVar) {
-            console.log('promptErrNumCheck', this);
             return (personalMovieDB.promptErrCheck(numberVar) || isNaN(numberVar));
         },
         
@@ -146,8 +156,8 @@ let personalMovieDB = {
     }
 ;
 
-personalMovieDB.start();
-personalMovieDB.rememberMyFilms();
-personalMovieDB.detectPersonalLevel();
+// personalMovieDB.start();
+// personalMovieDB.rememberMyFilms();
+// personalMovieDB.detectPersonalLevel();
 
 console.log(personalMovieDB);
