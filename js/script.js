@@ -1,156 +1,148 @@
 "use strict";
 
-let 
-    numberOfFilms,
-    personalMovieDB = {
-    count: Number,
-    movies: {},
-    actors: {},
-    genres: [],
-    privat: false
-    },
-    oneLastFilm, 
-    rateOfOneLastFilm, 
-    numberOfRateFilms = 0 
-    ;
 
-function start() {
-    do {
-        numberOfFilms = +prompt("Сколько фильмов вы уже посмотрели?", "");
-    } while (promptErrNumCheck(numberOfFilms));
-}
+let personalMovieDB = {
+        count: 0,
+        movies: {},
+        actors: {},
+        genres: [],
+        privat: false,
 
-const 
-    promptErr = 0,
-    promptErrNum = 0;
+        start: function() {
+            let numberOfFilms;
+            do {
+                numberOfFilms = +prompt("Сколько фильмов вы уже посмотрели?", "");
+            } while (personalMovieDB.promptErrNumCheck(numberOfFilms));
+            this.count += numberOfFilms;
+        },
 
-function promptErrCheck(textVar) {
-    return (textVar === null || textVar == "" || /^\s+$/.test(textVar));
-}
+        rememberMyFilms: function () {
+            console.log('rememberMyFilms', this);
 
-function promptErrNumCheck(numberVar) {
-    return (promptErrCheck(numberVar) || isNaN(numberVar));
-}
-
-//Не используется (была вырезана)
-function lengthF(str) {
-    return str.length;
-}
-
-function compare(compared, operation, reference){
-    if (isNaN(compared)) {
-        compared = compared.length;
-    }
-    switch (operation) {
-        case '<':
-            return (compared < reference);
-        case '<=':
-            return (compared <= reference);
-        case '==':
-            return (compared == reference);
-        case '===':
-            return (compared === reference);
-        case '>=':
-            return (compared >= reference);
-        case '>':
-            return (compared > reference);
-        default:
-            console.log('function "compare" accepted an unknow operator');
-            return false;
-    }
-}
-
-/**
- * Запрашивает данные вплоть до выполнения задданых условий, данные записываются в глобальную переменную fParam
- *
- * @param {String} text Выводимый в вопросе текст
- * @param {Array<Array<Function, String>>} verificationСonditions Перечень запретов в виде массива с массивами, 
- * содержащих функцию и значения ее параметров, начиная со второго, первым аргументом передается ответ пользователя.
- * @param {Array<String>} alerts Перечень выводимых предупреждений
- * @return {String} Ответ пользователя
- */
-function promptWhile(text, verificationСonditions, alerts) {
-    let 
-        lengthVC = verificationСonditions.length,
-        answer
-    ;
-
-    out1: while(true) { 
-        answer = prompt(text, "");
-        
-        for (let i = 0; i < lengthVC; i++) {
-            switch (true) {
-                //verificationСonditions - массив из массивов. Каждый i-й элемент содержит массив-условие, 
-                //нулевым элементом которого является проверяющая фунция, остальными - условия проверки ответа
-                case verificationСonditions[i][0](answer, ...verificationСonditions[i].slice(1)):
-                    alert(alerts[i]);
-                    continue out1;
-                default:
-                    break; 
+            let numberOfRateFilms = Object.keys(this.movies).length,
+                oneLastFilm, 
+                rateOfOneLastFilm
+            ;
+            //Количество незаполненных фильмов итераций
+            out1: for (let i = 0, temp = this.count - numberOfRateFilms; i < temp; i++) {
+                oneLastFilm = personalMovieDB.promptWhile( 'Один из последних просмотренных фильмов?', 
+                                [[personalMovieDB.promptErrCheck], [personalMovieDB.compare, '>', 50]], 
+                                ['Необходимо указать все фильмы', 'Не более 50 символов в названии'] );
+                const str = 'Укажите оценку от 1 до 10';
+                rateOfOneLastFilm = personalMovieDB.promptWhile( 'На сколько оцените его?', 
+                                        [[personalMovieDB.promptErrNumCheck], 
+                                        [personalMovieDB.compare, '<', 1], [personalMovieDB.compare, '>', 10]],
+                                        [str, str, str] ); 
+                if (oneLastFilm in this.movies) {
+                    i--;
+                    alert(`Фильму "${oneLastFilm}" присвоена новая оценка`);
+                }
+                this.movies[oneLastFilm] = rateOfOneLastFilm;
+                //this.count++;
             }
-        }
+        },
+        
+        detectPersonalLevel: function () {
+            switch (true) {
+                default:
+                case isNaN(this.count):
+                    alert("Произошла ошибка");
+                    break;
+                case this.count < 10:
+                    alert("Просмотрено довольно мало фильмов");
+                    break;
+                case this.count <= 30:
+                    alert("Вы классический зритель");
+                    break;
+                case this.count > 30:
+                    alert("Вы киноман");
+            }
+        },
+        
+        showMyDB: function () {
+            if (!this.private) {
+                console.log(this);
+            }
+        },
+        
+        writeYourGenres: function () {
+            for (let i = 0; i < 3; i++) {
+                this.genres[i] = prompt(`Ваш любимый жанр под номером ${i+1}`, '');
+            }
+        },
 
-        break;
-    } 
-    return answer;
-}
+    
+        promptErrCheck: function (textVar) {
+            return (textVar === null || textVar == "" || /^\s+$/.test(textVar));
+        },
+        
+        promptErrNumCheck: function (numberVar) {
+            console.log('promptErrNumCheck', this);
+            return (personalMovieDB.promptErrCheck(numberVar) || isNaN(numberVar));
+        },
+        
+        compare: function (compared, operation, reference) {
+            if (isNaN(compared)) {
+                compared = compared.length;
+            }
+            switch (operation) {
+                case '<':
+                    return (compared < reference);
+                case '<=':
+                    return (compared <= reference);
+                case '==':
+                    return (compared == reference);
+                case '===':
+                    return (compared === reference);
+                case '>=':
+                    return (compared >= reference);
+                case '>':
+                    return (compared > reference);
+                default:
+                    console.log('function "compare" accepted an unknow operator');
+                    return false;
+            }
+        },
 
-
-function rememberMyFilms(DBName) {
-    let numberOfRateFilms = Object.keys(DBName.movies).length;
-    //Количество незаполненных фильмов итераций
-    out1: for (let i = 0, temp = numberOfFilms - numberOfRateFilms; i < temp; i++) {
-        oneLastFilm = promptWhile( 'Один из последних просмотренных фильмов?', 
-                        [ [promptErrCheck], [compare, '>', 50] ], 
-                        ['Необходимо указать все фильмы', 'Не более 50 символов в названии'] );
-        const str = 'Укажите оценку от 1 до 10';
-        rateOfOneLastFilm = promptWhile( 'На сколько оцените его?', 
-                                [ [promptErrNumCheck], [compare, '<', 1], [compare, '>', 10] ],
-                                [str, str, str] ); 
-        if (oneLastFilm in DBName.movies) {
-            i--;
-            alert(`Фильму "${oneLastFilm}" присвоена новая оценка`);
-        }
-        DBName.movies[oneLastFilm] = rateOfOneLastFilm;
-        DBName.count++;
+        /**
+         * Запрашивает данные вплоть до выполнения задданых условий, данные записываются в глобальную переменную fParam
+         *
+         * @param {String} text Выводимый в вопросе текст
+         * @param {Array<Array<Function, String>>} verificationСonditions Перечень запретов в виде массива с массивами, 
+         * содержащих функцию и значения ее параметров, начиная со второго, первым аргументом передается ответ пользователя.
+         * @param {Array<String>} alerts Перечень выводимых предупреждений
+         * @return {String} Ответ пользователя
+         */
+        promptWhile: function (text, verificationСonditions, alerts) {
+            let 
+                lengthVC = verificationСonditions.length,
+                answer
+            ;
+        
+            out1: while(true) { 
+                answer = prompt(text, "");
+                for (let i = 0; i < lengthVC; i++) {
+                    switch (true) {
+                        //verificationСonditions - массив из массивов. Каждый i-й элемент содержит массив-условие, 
+                        //нулевым элементом которого является проверяющая фунция, остальными - условия проверки ответа
+                        case verificationСonditions[i][0](answer, ...verificationСonditions[i].slice(1)):
+                            alert(alerts[i]);
+                            continue out1;
+                        default:
+                            break; 
+                    }
+                }
+            
+                break;
+            } 
+            return answer;
+        },
+        
     }
-}
+;
 
-function detectPersonalLevel(DBname) {
-    switch (true) {
-        default:
-        case isNaN(DBname.count):
-            alert("Произошла ошибка");
-            break;
-        case DBname.count < 10:
-            alert("Просмотрено довольно мало фильмов");
-            break;
-        case DBname.count <= 30:
-            alert("Вы классический зритель");
-            break;
-        case DBname.count > 30:
-            alert("Вы киноман");
-    }
-}
-
-function showMyDB(DBname) {
-    if (!DBname.private) {
-        console.log(DBname);
-    }
-}
-
-function writeYourGenres(DBname) {
-    for (let i = 0; i < 3; i++) {
-        DBname.genres[i] = prompt(`Ваш любимый жанр под номером ${i+1}`, '');
-    }
-}
-
-start();
-if (prompt('rememberMyFilms', '') !== null) {
-    rememberMyFilms(personalMovieDB);
-}
-detectPersonalLevel(personalMovieDB);
-
-
+personalMovieDB.start();
+personalMovieDB.rememberMyFilms();
+personalMovieDB.detectPersonalLevel();
 
 console.log(personalMovieDB);
