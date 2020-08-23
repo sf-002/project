@@ -1,17 +1,3 @@
-/* Задания на урок:
-
-1) Удалить все рекламные блоки со страницы (правая часть сайта)
-
-2) Изменить жанр фильма, поменять "комедия" на "драма"
-
-3) Изменить задний фон постера с фильмом на изображение "bg.jpg". Оно лежит в папке img.
-Реализовать только при помощи JS
-
-4) Список фильмов на странице сформировать на основании данных из этого JS файла.
-Отсортировать их по алфавиту 
-
-5) Добавить нумерацию выведенных фильмов */
-
 'use strict';
 
 const movieDB = {
@@ -44,9 +30,25 @@ const
 
 function displayFilms() {
     movieDB.movies.sort();
-    document.querySelectorAll('.promo__interactive-item').forEach ((item, i) => {
-        item.firstChild.data = `${i+1}. ${movieDB.movies[i]} `;
-    });
+    // document.querySelectorAll('.promo__interactive-item').forEach ((item, i) => {
+    //     if (movieDB.movies[i]) {
+    //         item.firstChild.data = `${i+1}. ${movieDB.movies[i]} `;
+    //     } else {
+    //         item.firstChild.data = i+1;
+    //     }
+    // });
+    let listLength = (movieDB.movies.length > 5) ? 5 : movieDB.movies.length,
+        filmList = document.querySelector('.promo__interactive-list');
+    console.log(filmList);
+    filmList.textContent = "";
+    for (let i = 0; i < listLength; i++) {
+        filmList.innerHTML += `
+        <li class="promo__interactive-item">${i+1}. ${movieDB.movies[i]}
+            <div class="delete"></div>
+        </li>        
+        `;
+    }
+    deleteBtnsEvent();
 }
 
 function rememberMyFilms(e) {
@@ -65,20 +67,18 @@ function rememberMyFilms(e) {
     displayFilms();
 }
 
+function deleteBtnsEvent() {
+    document.querySelectorAll('.delete').forEach((item, i) => {
+        item.addEventListener('click', deleteFilm);
+    });
+}
+
 function deleteFilm(e) {
-    //e.target.parentElement.textContent.slice(0, 1)
-    console.log('click');
-    console.log(e.target.parentElement.textContent.slice(0, 1) - 1);
-    console.log(movieDB.movies);
     movieDB.movies.splice(e.target.parentElement.textContent.slice(0, 1) - 1, 1);
-    
-    //console.log(movieDB.movies.slice(e.target.parentElement.textContent.slice(0, 1) - 1, 1));
     displayFilms();
 }
 
 displayFilms();
 addBtn.addEventListener('click', rememberMyFilms);
-document.querySelectorAll('.delete').forEach((item, i) => {
-    item.addEventListener('click', deleteFilm);
-});
+deleteBtnsEvent();
 
